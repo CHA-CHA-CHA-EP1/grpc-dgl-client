@@ -45,7 +45,7 @@ impl GcpClearDynamicRejectHandler {
 
         // Delete from smart_money_db
         println!("--- smart_money_db ---");
-        match gcp_create_db_pool(termloan_host, mysql_user, mysql_pass, "smart_money_db").await {
+        match gcp_create_db_pool(&termloan_host, &mysql_user, &mysql_pass, "smart_money_db").await {
             Ok(pool) => {
                 let mut query = sqlx::query(&query_str);
                 for cif in &cif_nums {
@@ -64,7 +64,7 @@ impl GcpClearDynamicRejectHandler {
 
         // Delete from tn_termloan_db
         println!("--- tn_termloan_db ---");
-        match gcp_create_db_pool(termloan_host, mysql_user, mysql_pass, "tn_termloan_db").await {
+        match gcp_create_db_pool(&termloan_host, &mysql_user, &mysql_pass, "tn_termloan_db").await {
             Ok(pool) => {
                 let mut query = sqlx::query(&query_str);
                 for cif in &cif_nums {
@@ -82,7 +82,7 @@ impl GcpClearDynamicRejectHandler {
         }
         // Delete from dg_lending_db
         println!("--- dg_lending_db ---");
-        match gcp_create_db_pool(dgl_host, mysql_user, mysql_pass, "dg_lending_db").await {
+        match gcp_create_db_pool(&dgl_host, &mysql_user, &mysql_pass, "dg_lending_db").await {
             Ok(pool) => {
                 let mut query = sqlx::query(&query_str);
                 for cif in &cif_nums {

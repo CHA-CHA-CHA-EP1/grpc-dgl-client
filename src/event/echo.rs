@@ -6,7 +6,7 @@ pub struct EchoHandler;
 
 #[async_trait]
 impl EventHandler for EchoHandler {
-    async fn handle(&self, payload: String) -> Result<String, String> {
+    async fn handle(&self, _payload: String) -> Result<String, String> {
         Ok("Ok".to_string())
     }
 }
