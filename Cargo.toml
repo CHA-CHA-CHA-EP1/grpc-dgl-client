@@ -19,6 +19,8 @@ sqlx = { version = "0.8", features = [
   "mysql",
   "tls-native-tls",
 ] }
+reqwest = { version = "0.13", features = ["json"] }
+serde_json = "1.0.149"
 
 [build-dependencies]
 tonic-prost-build = "0.14.2"

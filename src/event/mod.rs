@@ -1,3 +1,5 @@
+pub mod aws_delete_mock_face_scan_8_sec;
+pub mod aws_mock_face_scan_8_sec;
 pub mod echo;
 pub mod gcp_clear_dynamic_reject;
 pub mod gcp_delete_loan_appid;
@@ -6,7 +8,12 @@ use std::{collections::HashMap, sync::Arc};
 
 use tonic::async_trait;
 
-use crate::event::{echo::EchoHandler, gcp_clear_dynamic_reject::GcpClearDynamicRejectHandler, gcp_delete_loan_appid::GcpDeleteLoanAppIdHandler};
+use crate::event::{
+    aws_delete_mock_face_scan_8_sec::AwsDeleteMockFaceScan8Sec,
+    aws_mock_face_scan_8_sec::AwsMockFaceScan8Sec, echo::EchoHandler,
+    gcp_clear_dynamic_reject::GcpClearDynamicRejectHandler,
+    gcp_delete_loan_appid::GcpDeleteLoanAppIdHandler,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EventType {
@@ -14,6 +21,8 @@ pub enum EventType {
     GCPUATClearDynamicReject,
     GCPUATDeleteLoanAppId,
     GCPTestDbConnection,
+    AWSMockFaceScan8Sec,
+    AWSDeleteMockFaceScan8Sec,
     Unknown(String),
 }
 
@@ -23,6 +32,8 @@ impl From<&str> for EventType {
             "aws-dgl-echo" => EventType::Echo,
             "aws-gcp-uat-clear-dynamic-reject" => EventType::GCPUATClearDynamicReject,
             "aws-gcp-uat-delete-loan-appid" => EventType::GCPUATDeleteLoanAppId,
+            "aws-mock-face-scan-8-sec" => EventType::AWSMockFaceScan8Sec,
+            "aws-delete-mock-face-scan-8-sec" => EventType::AWSDeleteMockFaceScan8Sec,
             _ => EventType::Unknown(s.to_string()),
         }
     }
@@ -50,6 +61,14 @@ impl EventRegistry {
         registry.register(
             EventType::GCPUATDeleteLoanAppId,
             Arc::new(GcpDeleteLoanAppIdHandler),
+        );
+        registry.register(
+            EventType::AWSMockFaceScan8Sec,
+            Arc::new(AwsMockFaceScan8Sec),
+        );
+        registry.register(
+            EventType::AWSDeleteMockFaceScan8Sec,
+            Arc::new(AwsDeleteMockFaceScan8Sec),
         );
         registry
     }
