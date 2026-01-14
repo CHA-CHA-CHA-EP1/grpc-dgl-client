@@ -1,0 +1,25 @@
+syntax = "proto3";
+package tunnel.v1;
+
+service TunnelService {
+  rpc ConnectTunnel(stream AgentMessage) returns (stream ServerMessage);
+}
+
+message AgentMessage {
+  oneof payload {
+    RegisterInfo register = 1;
+    ResponseInfo response = 2;
+  }
+}
+
+message RegisterInfo {
+  string agent_name = 1;
+}
+
+message ResponseInfo {
+  string message = 1;
+}
+
+message ServerMessage {
+  string message = 1;
+}
