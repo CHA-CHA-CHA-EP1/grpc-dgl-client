@@ -9,19 +9,49 @@ impl GcpClearDynamicRejectHandler {
         &self,
         cif_num: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        let mysql_user = "";
-        let mysql_pass = "";
-        let termloan_host = "";
-        let dgl_host = "";
+        // Parse CIF numbers
+        let cif_nums: Vec<String> = cif_num
+            .trim()
+            .split(",")
+            .map(|s| s.trim().to_string())
+            .filter(|cif| !cif.is_empty())
+            .collect();
+
+        // Build SQL query based on number of CIFs
+        let (query_str, is_multiple) = if cif_nums.len() > 1 {
+            let placeholders = cif_nums.iter().map(|_| "?").collect::<Vec<_>>().join(", ");
+            (
+                format!(
+                    "DELETE FROM LOAN_APPLICATION_STATUS WHERE CIF_NUM IN ({})",
+                    placeholders
+                ),
+                true,
+            )
+        } else {
+            (
+                "DELETE FROM LOAN_APPLICATION_STATUS WHERE CIF_NUM = ?".to_string(),
+                false,
+            )
+        };
+
+        let mysql_user = std::env::var("MYSQL_USER")
+            .expect("MYSQL_USER environment variable is required");
+        let mysql_pass = std::env::var("MYSQL_PASS")
+            .expect("MYSQL_PASS environment variable is required");
+        let termloan_host = std::env::var("TERMLOAN_HOST")
+            .expect("TERMLOAN_HOST environment variable is required");
+        let dgl_host = std::env::var("DGL_HOST")
+            .expect("DGL_HOST environment variable is required");
 
         // Delete from smart_money_db
         println!("--- smart_money_db ---");
         match gcp_create_db_pool(termloan_host, mysql_user, mysql_pass, "smart_money_db").await {
             Ok(pool) => {
-                let result = sqlx::query("DELETE FROM LOAN_APPLICATION_STATUS WHERE CIF_NUM = ?")
-                    .bind(cif_num)
-                    .execute(&pool)
-                    .await?;
+                let mut query = sqlx::query(&query_str);
+                for cif in &cif_nums {
+                    query = query.bind(cif);
+                }
+                let result = query.execute(&pool).await?;
 
                 println!("smart_money_db: Deleted {} row(s)", result.rows_affected());
                 pool.close().await;
@@ -36,10 +66,11 @@ impl GcpClearDynamicRejectHandler {
         println!("--- tn_termloan_db ---");
         match gcp_create_db_pool(termloan_host, mysql_user, mysql_pass, "tn_termloan_db").await {
             Ok(pool) => {
-                let result = sqlx::query("DELETE FROM LOAN_APPLICATION_STATUS WHERE CIF_NUM = ?")
-                    .bind(cif_num)
-                    .execute(&pool)
-                    .await?;
+                let mut query = sqlx::query(&query_str);
+                for cif in &cif_nums {
+                    query = query.bind(cif);
+                }
+                let result = query.execute(&pool).await?;
 
                 println!("tn_termloan_db: Deleted {} row(s)", result.rows_affected());
                 pool.close().await;
@@ -53,10 +84,11 @@ impl GcpClearDynamicRejectHandler {
         println!("--- dg_lending_db ---");
         match gcp_create_db_pool(dgl_host, mysql_user, mysql_pass, "dg_lending_db").await {
             Ok(pool) => {
-                let result = sqlx::query("DELETE FROM LOAN_APPLICATION_STATUS WHERE CIF_NUM = ?")
-                    .bind(cif_num)
-                    .execute(&pool)
-                    .await?;
+                let mut query = sqlx::query(&query_str);
+                for cif in &cif_nums {
+                    query = query.bind(cif);
+                }
+                let result = query.execute(&pool).await?;
 
                 println!("dg_lending_db: Deleted {} row(s)", result.rows_affected());
                 pool.close().await;
