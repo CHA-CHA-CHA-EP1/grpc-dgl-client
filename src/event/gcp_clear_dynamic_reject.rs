@@ -34,14 +34,14 @@ impl GcpClearDynamicRejectHandler {
             )
         };
 
-        let mysql_user = std::env::var("MYSQL_USER")
-            .expect("MYSQL_USER environment variable is required");
-        let mysql_pass = std::env::var("MYSQL_PASS")
-            .expect("MYSQL_PASS environment variable is required");
-        let termloan_host = std::env::var("TERMLOAN_HOST")
-            .expect("TERMLOAN_HOST environment variable is required");
-        let dgl_host = std::env::var("DGL_HOST")
-            .expect("DGL_HOST environment variable is required");
+        let mysql_user =
+            std::env::var("MYSQL_USER").expect("MYSQL_USER environment variable is required");
+        let mysql_pass =
+            std::env::var("MYSQL_PASS").expect("MYSQL_PASS environment variable is required");
+        let termloan_host =
+            std::env::var("TERMLOAN_HOST").expect("TERMLOAN_HOST environment variable is required");
+        let dgl_host =
+            std::env::var("DGL_HOST").expect("DGL_HOST environment variable is required");
 
         // Delete from smart_money_db
         println!("--- smart_money_db ---");

@@ -1,16 +1,18 @@
 pub mod echo;
 pub mod gcp_clear_dynamic_reject;
+pub mod gcp_delete_loan_appid;
 
 use std::{collections::HashMap, sync::Arc};
 
 use tonic::async_trait;
 
-use crate::event::{echo::EchoHandler, gcp_clear_dynamic_reject::GcpClearDynamicRejectHandler};
+use crate::event::{echo::EchoHandler, gcp_clear_dynamic_reject::GcpClearDynamicRejectHandler, gcp_delete_loan_appid::GcpDeleteLoanAppIdHandler};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EventType {
     Echo,
     GCPUATClearDynamicReject,
+    GCPUATDeleteLoanAppId,
     GCPTestDbConnection,
     Unknown(String),
 }
@@ -20,6 +22,7 @@ impl From<&str> for EventType {
         match s {
             "aws-dgl-echo" => EventType::Echo,
             "aws-gcp-uat-clear-dynamic-reject" => EventType::GCPUATClearDynamicReject,
+            "aws-gcp-uat-delete-loan-appid" => EventType::GCPUATDeleteLoanAppId,
             _ => EventType::Unknown(s.to_string()),
         }
     }
@@ -43,6 +46,10 @@ impl EventRegistry {
         registry.register(
             EventType::GCPUATClearDynamicReject,
             Arc::new(GcpClearDynamicRejectHandler),
+        );
+        registry.register(
+            EventType::GCPUATDeleteLoanAppId,
+            Arc::new(GcpDeleteLoanAppIdHandler),
         );
         registry
     }
