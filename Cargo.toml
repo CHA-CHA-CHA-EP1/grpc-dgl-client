@@ -1,5 +1,5 @@
 [package]
-name = "grpc-client"
+name = "grpc_client"
 version = "0.1.0"
 edition = "2024"
 
@@ -8,7 +8,11 @@ async-stream = "0.3.6"
 prost = "0.14.1"
 tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread"] }
 tokio-stream = "0.1.18"
-tonic = "0.14.2"
+tonic = { version = "0.14.2", features = [
+  "transport",
+  "tls-webpki-roots",
+  "tls-ring",
+] }
 tonic-prost = "0.14.2"
 sqlx = { version = "0.8", features = [
   "runtime-tokio",

@@ -10,7 +10,8 @@ use crate::event::{echo::EchoHandler, gcp_clear_dynamic_reject::GcpClearDynamicR
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum EventType {
     Echo,
-    GCPClearDynamicReject,
+    GCPUATClearDynamicReject,
+    GCPTestDbConnection,
     Unknown(String),
 }
 
@@ -18,7 +19,7 @@ impl From<&str> for EventType {
     fn from(s: &str) -> Self {
         match s {
             "aws-dgl-echo" => EventType::Echo,
-            "aws-gcp-clear-dynamic-reject" => EventType::GCPClearDynamicReject,
+            "aws-gcp-uat-clear-dynamic-reject" => EventType::GCPUATClearDynamicReject,
             _ => EventType::Unknown(s.to_string()),
         }
     }
@@ -40,7 +41,7 @@ impl EventRegistry {
         };
         registry.register(EventType::Echo, Arc::new(EchoHandler));
         registry.register(
-            EventType::GCPClearDynamicReject,
+            EventType::GCPUATClearDynamicReject,
             Arc::new(GcpClearDynamicRejectHandler),
         );
         registry
@@ -59,8 +60,8 @@ impl EventRegistry {
 
         match self.handlers.get(&event_type) {
             Some(handler) => {
-                handler.handle(message.to_string()).await?;
-                Ok("Success".to_string())
+                let result = handler.handle(message.to_string()).await?;
+                Ok(result)
             }
             None => Err(format!("Unknown event type: {}", event).into()),
         }

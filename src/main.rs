@@ -2,12 +2,13 @@ pub mod tunnel {
     tonic::include_proto!("tunnel.v1");
 }
 
-use std::env::{self, args};
+use std::env;
 use std::sync::Arc;
 
 use grpc_client::event::EventRegistry;
 use tokio::sync::mpsc;
 use tokio_stream::StreamExt;
+use tonic::transport::Endpoint;
 use tunnel::tunnel_service_client::TunnelServiceClient;
 use tunnel::{AgentMessage, RegisterInfo, ResponseInfo, agent_message};
 
@@ -25,7 +26,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let cluster = args.next().unwrap_or("dgl-aws-sit".to_string());
 
-    let mut client = TunnelServiceClient::connect("http://127.0.0.1:50051").await?;
+    let endpoint = Endpoint::from_static("https://cha14.xyz").http2_adaptive_window(true);
+
+    let mut client = TunnelServiceClient::connect(endpoint).await?;
     let (tx, mut rx) = mpsc::channel::<AgentMessage>(100);
 
     let registry = Arc::new(EventRegistry::new());
