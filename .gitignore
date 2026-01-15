@@ -1,4 +1,4 @@
 /target
 Makefile
 test.sh
-/output
+output/
