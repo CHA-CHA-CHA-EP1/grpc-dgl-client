@@ -1,4 +1,5 @@
 pub mod aws_delete_mock_face_scan_8_sec;
+pub mod aws_mock_api_error;
 pub mod aws_mock_face_scan_8_sec;
 pub mod echo;
 pub mod gcp_clear_dynamic_reject;
