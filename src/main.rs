@@ -27,7 +27,7 @@ async fn connect_and_run(
 ) -> Result<(), Box<dyn std::error::Error>> {
     println!("Connecting to server...");
 
-    let endpoint = Endpoint::from_static("https://cha14.xyz")
+    let endpoint = Endpoint::from_static("https://dgl-grpc.cha14.xyz")
         .http2_adaptive_window(true)
         .http2_keep_alive_interval(Duration::from_secs(30))
         .keep_alive_timeout(Duration::from_secs(10))

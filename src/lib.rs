@@ -1,3 +1,3 @@
 pub mod event;
 pub mod helper;
-pub mod enum;
+pub mod r#enum;
